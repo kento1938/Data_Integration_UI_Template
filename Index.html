@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Executive Decision Monitor</title>
+    <style>
+        :root {
+            --bg-card: #0d1117;
+            --border: #30363d;
+            --text-main: #e6edf3;
+            --text-sub: #8b949e;
+            --accent-token: #d29922; /* Estimated Time */
+            --accent-ai: #58a6ff;
+            --accent-human: #ff7b72;
+            --tool-bg: #161b22;
+        }
+
+        body { background: #010409; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding: 20px; }
+
+        .exec-card {
+            width: 500px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        }
+
+        .header { padding: 16px; border-bottom: 1px solid var(--border); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+
+        /* --- Analysis & Judgment Section --- */
+        .strategy-details { border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+        summary { padding: 12px 16px; font-size: 12px; color: var(--text-sub); cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
+        
+        .strategy-grid { padding: 0 16px 16px 16px; font-size: 12px; display: grid; gap: 12px; }
+        .strat-label { color: var(--accent-ai); font-size: 10px; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .strat-item { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- WBS Timeline --- */
+        .wbs-body { padding: 24px 16px; }
+
+        .step {
+            position: relative;
+            padding-left: 35px;
+            padding-bottom: 30px;
+            border-left: 1px solid var(--border);
+            margin-left: 12px;
+        }
+        .step:last-child { border-left: 1px dashed var(--border); padding-bottom: 0; }
+
+        .step-icon {
+            position: absolute;
+            left: -15px; top: 0;
+            width: 28px; height: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; z-index: 2;
+        }
+
+        .step-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .task-main { font-weight: 600; font-size: 14px; }
+        .est-time { font-size: 11px; color: var(--accent-token); font-family: monospace; font-weight: bold; }
+
+        .assignee-tag {
+            font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 1px solid currentColor; margin-left: 8px; vertical-align: middle;
+        }
+        .tag-ai { color: var(--accent-ai); background: rgba(88, 166, 255, 0.1); }
+        .tag-human { color: var(--accent-human); background: rgba(255, 123, 114, 0.1); }
+
+        .task-detail { font-size: 12px; color: var(--text-sub); line-height: 1.5; margin-top: 4px; }
+
+        /* AI Prompt Box */
+        .prompt-fold { margin-top: 10px; background: var(--tool-bg); border-radius: 4px; border: 1px solid var(--border); }
+        .prompt-fold summary { padding: 6px 10px; color: var(--accent-ai); font-weight: bold; font-size: 11px; }
+        .prompt-content { padding: 10px; font-family: 'SF Mono', monospace; font-size: 11px; color: #d1d5db; background: #000; border-radius: 0 0 4px 4px; white-space: pre-wrap; }
+
+        /* Status Indicators */
+        .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+        .done { background: #3fb950; }
+        .processing { background: var(--accent-ai); animation: pulse 2s infinite; }
+        .pending { background: #484f58; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+
+<div class="exec-card">
+    <div class="header">
+        <span>Strategic Execution Plan</span>
+        <span style="color: var(--text-sub); font-size: 11px;">#AE-2026-X</span>
+    </div>
+
+    <details class="strategy-details">
+        <summary>Analysis & Rationale <span>▼</span></summary>
+        <div class="strategy-grid">
+            <div class="strat-item">
+                <span class="strat-label">Analysis (Findings)</span>
+                <ul style="margin: 0; padding-left: 15px; color: var(--text-main);">
+                    <li>主要クライアントの四半期ROIが前月比12%低下</li>
+                    <li>原因は特定セグメントのCPA高騰によるものと特定</li>
+                </ul>
+            </div>
+            <div class="strat-item">
+                <span class="strat-label">Judgment (Rationale)</span>
+                <div>予算の再分配を行い、高効率な検索広告へ40%をシフト。これによりROIの早期回復(目標+15%)を狙うのが最善と判断。</div>
+            </div>
+            <div class="strat-item" style="border-left-color: var(--accent-human);">
+                <span class="strat-label">Risk Assessment</span>
+                <div>配信チャネルの切り替えに伴う初期学習期間（約3日間）の成果不安定化。</div>
+            </div>
+        </div>
+    </details>
+
+    <div class="wbs-body">
+        <div class="step">
+            <div class="step-icon">📊</div>
+            <div class="step-header">
+                <div>
+                    <span class="dot done"></span>
+                    <span class="task-main">予算シミュレーションの実行</span>
+                    <span class="assignee-tag tag-ai">AI</span>
+                </div>
+                <div class="est-time">Est. 2m</div>
+            </div>
+            <div class="task-detail">各チャネルの限界CPAを算出し、最適な投資配分比率を数学的に決定します。</div>
+        </div>
+
+        <div class="step">
+            <div class="step-icon">⚖️</div>
+            <div class="step-header">
+                <div>
+                    <span class="dot processing"></span>
+                    <span class="task-main">配分プランの戦略的妥当性チェック</span>
+                    <span class="assignee-tag tag-human">Human</span>
+                </div>
+                <div class="est-time">Est. 15m</div>
+            </div>
+            <div class="task-detail">AIの算出した数値がクライアントのブランド方針（例：短期利益より新規認知重視）と乖離していないかを確認します。</div>
+        </div>
+
+        <div class="step">
+            <div class="step-icon">📝</div>
+            <div class="step-header">
+                <div>
+                    <span class="dot pending"></span>
+                    <span class="task-main">クライアント報告用ドラフト作成</span>
+                    <span class="assignee-tag tag-ai">AI</span>
+                </div>
+                <div class="est-time">Est. 5m</div>
+            </div>
+            <div class="task-detail">変更の根拠と期待効果を、担当者のトーンに合わせたメール形式で出力します。</div>
+            
+            <details class="prompt-fold">
+                <summary>AI Task Prompt</summary>
+                <div class="prompt-content">Context: 予算を検索広告へ40%シフト。
+Target: クライアント担当者
+Tone: 誠実かつプロフェッショナル
+Content: ROI低下の原因分析、今回の施策、今後の見通しを含めて作成せよ。</div>
+            </details>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
